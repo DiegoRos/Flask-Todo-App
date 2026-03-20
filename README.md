@@ -24,7 +24,7 @@ A simple, containerized task management application built with Flask and MongoDB
 
 1.  **Clone the repository:**
     ```bash
-    git clone <repository-url>
+    git clone https://github.com/DiegoRos/Flask-Todo-App
     cd app_files
     ```
 

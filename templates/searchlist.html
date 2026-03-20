@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ t }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans min-h-screen flex flex-col items-center py-10">
+
+<div class="w-full max-w-3xl bg-white rounded-2xl shadow-xl p-8 relative">
+    
+    <h1 class="text-3xl font-bold text-center mb-8 text-indigo-600">{{ h }}</h1>
+
+    <nav class="flex flex-wrap justify-center gap-3 mb-8">
+        <a href="/list" class="px-5 py-2 rounded-full font-medium transition {% if a1 %}bg-indigo-600 text-white shadow-md{% else %}bg-gray-100 text-gray-600 hover:bg-gray-200{% endif %}">All</a>
+        <a href="/" class="px-5 py-2 rounded-full font-medium transition {% if a2 %}bg-indigo-600 text-white shadow-md{% else %}bg-gray-100 text-gray-600 hover:bg-gray-200{% endif %}">Uncompleted</a>
+        <a href="/completed" class="px-5 py-2 rounded-full font-medium transition {% if a3 %}bg-indigo-600 text-white shadow-md{% else %}bg-gray-100 text-gray-600 hover:bg-gray-200{% endif %}">Completed</a>
+        <a href="/about" class="px-5 py-2 rounded-full font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 transition">About</a>
+    </nav>
+
+    <div class="flex items-center justify-between mb-6 border-b border-gray-100 pb-4">
+        <h2 class="text-xl font-semibold text-gray-700">Search Results</h2>
+        <a href="/list" class="text-sm text-indigo-500 hover:text-indigo-700 font-medium transition">
+            <i class="fa-solid fa-arrow-left mr-1"></i> Back to all tasks
+        </a>
+    </div>
+
+    {% if todos and todos[0] %}
+    <div class="space-y-4">
+        {% for todo in todos %}
+        <div class="group flex items-center justify-between p-4 bg-white border border-gray-200 rounded-xl hover:shadow-md hover:border-indigo-100 transition duration-200">
+            <div class="flex items-center space-x-4">
+                <a href="./done?_id={{ todo['_id'] }}" class="text-2xl flex-shrink-0 transition transform hover:scale-110">
+                    {% if todo['done'] == 'yes' %}
+                        <i class="fa-solid fa-circle-check text-green-500"></i>
+                    {% else %}
+                        <i class="fa-regular fa-circle text-gray-300 hover:text-indigo-400"></i>
+                    {% endif %}
+                </a>
+                <div>
+                    <h3 class="text-lg font-semibold {% if todo['done'] == 'yes' %}line-through text-gray-400{% else %}text-gray-800{% endif %}">
+                        {{ todo["name"] }}
+                    </h3>
+                    <p class="text-sm text-gray-500 mt-1">{{ todo["desc"] }}</p>
+                    <div class="flex items-center space-x-3 mt-2 text-xs font-medium">
+                        <span class="text-gray-400"><i class="fa-regular fa-calendar mr-1"></i> {{ todo["date"] }}</span>
+                        <span class="px-2.5 py-0.5 rounded-full 
+                            {% if 'High' in todo['pr'] %}bg-red-100 text-red-600
+                            {% elif 'Medium' in todo['pr'] %}bg-yellow-100 text-yellow-600
+                            {% else %}bg-green-100 text-green-600{% endif %}">
+                            {{ todo["pr"] }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="flex flex-col space-y-2 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">
+                <a href="./update?_id={{ todo['_id'] }}" class="text-blue-500 hover:text-blue-700 p-2 bg-blue-50 hover:bg-blue-100 rounded-lg text-center transition" title="Edit">
+                    <i class="fa-solid fa-pen"></i>
+                </a>
+                <a href="./remove?_id={{ todo['_id'] }}" class="text-red-500 hover:text-red-700 p-2 bg-red-50 hover:bg-red-100 rounded-lg text-center transition" title="Delete">
+                    <i class="fa-solid fa-trash"></i>
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-12 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
+        <i class="fa-solid fa-magnifying-glass text-4xl text-gray-300 mb-3"></i>
+        <h4 class="text-lg text-gray-500 font-medium">No Results Found</h4>
+        <p class="text-sm text-gray-400 mt-2">We couldn't find any tasks matching your search criteria.</p>
+        <a href="/list" class="mt-4 inline-block px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-100 transition text-sm font-medium">Clear Search</a>
+    </div>
+    {% endif %}
+
+</div>
+
+</body>
+</html>

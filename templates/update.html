@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ t }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans min-h-screen flex flex-col items-center py-10">
+
+<div class="w-full max-w-xl bg-white rounded-2xl shadow-xl p-8 relative">
+    <a href="/list" class="absolute top-8 left-8 text-gray-400 hover:text-indigo-600 transition"><i class="fa-solid fa-arrow-left text-xl"></i></a>
+
+    <h1 class="text-3xl font-bold text-center mb-8 text-indigo-600">Update Task</h1>
+
+    <form action="/action3" method="POST" class="space-y-5">
+        {% for task in tasks %}
+        <input type="hidden" name="_id" value="{{ task['_id'] }}">
+
+        <div>
+            <label class="block text-sm font-medium text-gray-600 mb-1">Task Name</label>
+            <input type="text" name="name" value="{{ task['name'] }}" class="w-full bg-gray-50 border border-gray-200 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 transition">
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium text-gray-600 mb-1">Description</label>
+            <textarea name="desc" rows="3" class="w-full bg-gray-50 border border-gray-200 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 transition">{{ task['desc'] }}</textarea>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-600 mb-1">Date</label>
+                <input type="date" name="date" value="{{ task['date'] }}" class="w-full bg-gray-50 border border-gray-200 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 transition">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-600 mb-1">Priority</label>
+                <select name="pr" class="w-full bg-gray-50 border border-gray-200 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 transition">
+                    <option value="Low !" {% if 'Low' in task['pr'] %}selected{% endif %}>Low</option>
+                    <option value="Medium !!" {% if 'Medium' in task['pr'] %}selected{% endif %}>Medium</option>
+                    <option value="High !!!" {% if 'High' in task['pr'] %}selected{% endif %}>High</option>
+                </select>
+            </div>
+        </div>
+        {% endfor %}
+
+        <div class="pt-4">
+            <button type="submit" class="w-full bg-indigo-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-indigo-700 transition duration-200 shadow-md">
+                Save Changes
+            </button>
+        </div>
+    </form>
+</div>
+
+</body>
+</html>

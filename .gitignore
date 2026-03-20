@@ -1,0 +1,32 @@
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Environment variables (Sensitive Data)
+.env
+.flaskenv
+
+# Instance folder (Flask-specific)
+instance/
+
+# Databases
+*.sqlite3
+*.db
+
+# IDEs/Editors
+.vscode/
+.idea/
+
+# Testing and Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+GEMINI.md

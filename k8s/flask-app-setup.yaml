@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flask-todo-app
+spec:
+  replicas: 3 # Part 5: Define desired number of replicas
+  strategy: # Part 6: Rolling update strategy
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: flask-todo-app
+  template:
+    metadata:
+      labels:
+        app: flask-todo-app
+    spec:
+      containers:
+      - name: flask-todo-app
+        image: diegoros21/flask-todo-app:v2
+        ports:
+        - containerPort: 5000
+        startupProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          failureThreshold: 30  # Try 30 times
+          periodSeconds: 10  # Check every 10 seconds
+        env:
+        - name: MONGO_HOST
+          value: "mongodb" # Points to the MongoDB service name
+        resources:
+          requests:
+            memory: "248Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        
+        # Part 7: Health Monitoring (Liveness & Readiness Probes)
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          initialDelaySeconds: 45
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          initialDelaySeconds: 15
+          periodSeconds: 15
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: flask-todo-service
+spec:
+  type: LoadBalancer # Exposes the service
+  selector:
+    app: flask-todo-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 5000

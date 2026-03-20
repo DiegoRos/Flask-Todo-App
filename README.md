@@ -50,9 +50,23 @@ docker-compose up --build
 
 The `k8s/` directory contains manifests for deploying the application with persistent storage:
 
+NOTE: If you wish to deploy on locally palace a comment on the `storageClassName` in the k8s/mongo-setup.yaml and skip step 1. 
+
 1.  **Storage Class:** `kubectl apply -f k8s/sc.yaml`
 2.  **MongoDB:** `kubectl apply -f k8s/mongo-setup.yaml`
 3.  **Flask Application:** `kubectl apply -f k8s/flask-app-setup.yaml`
+4.  **Monitoring and Alerting using Helm**: `helm upgrade prometheus prometheus-community/kube-prometheus-stack -f k8s/alert-config.yaml`
+
+
+## Monitoring & Alerting
+
+The project includes pre-configured monitoring and alerting via Prometheus and Alertmanager (see `k8s/alert-config.yaml`):
+
+- **Notifications:** Alerts are configured to be sent to a dedicated Slack channel (`#alerts`).
+- **Custom Alert Rules:**
+  - **FlaskAppPodMissing (Critical):** Triggers if the Flask app pod is missing or not in a `Running` state for more than 1 minute.
+  - **HighProbeFailureRate (Warning):** Triggers if pods are restarting continuously, indicating failed liveness or readiness probes.
+- **Noise Reduction:** The `Watchdog` heartbeat alert is suppressed to prevent notification spam.
 
 ## Configuration
 

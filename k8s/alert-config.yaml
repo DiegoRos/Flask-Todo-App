@@ -1,0 +1,50 @@
+alertmanager:
+  enabled: true
+  config:
+    global:
+      resolve_timeout: 5m
+    route:
+      group_by: ['alertname', 'job']
+      group_wait: 30s
+      group_interval: 1m
+      repeat_interval: 1h
+      receiver: 'slack-notifications'
+      routes:
+      # Catch the Watchdog heartbeat alert and send it to the 'null' receiver 
+      # so it doesn't constantly spam your Slack channel.
+      - matchers:
+        - alertname = Watchdog
+        receiver: 'null'
+    receivers:
+    - name: 'slack-notifications'
+      slack_configs:
+      - api_url: 'https://hooks.slack.com/services/<slack-webhook-url>'
+        channel: '#alerts'
+        send_resolved: true
+    - name: 'null'
+
+# This configures Prometheus to generate alerts when certain conditions are met
+additionalPrometheusRulesMap:
+  custom-rules:
+    groups:
+      - name: custom.rules
+        rules:
+          # Alert 1: Triggers if the Flask app pod is deleted or missing
+          - alert: FlaskAppPodMissing
+            expr: absent(kube_pod_status_phase{pod=~"flask-todo-app-.*", phase="Running"})
+            for: 1m
+            labels:
+              severity: critical
+            annotations:
+              summary: "Flask App Pod is missing!"
+              description: "The flask-todo-app pod has been deleted or is not running."
+          
+          # Alert 2: Triggers if probes fail and cause the pod to restart continuously
+          - alert: HighProbeFailureRate
+            expr: rate(kube_pod_container_status_restarts_total{namespace="default"}[5m]) > 0
+            for: 1m
+            labels:
+              severity: warning
+            annotations:
+              summary: "Pod is restarting continuously"
+              description: "Pod {{ $labels.pod }} is failing its health probes and restarting."
